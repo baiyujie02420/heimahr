@@ -4,8 +4,8 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 /* Layout */
-/* Layout */
 import Layout from '@/layout'
+
 import departmentRouter from './modules/department'
 import approvalRouter from './modules/approval'
 import attendanceRouter from './modules/attendance'
@@ -15,6 +15,7 @@ import roleRouter from './modules/role'
 import salaryRouter from './modules/salary'
 import socialRouter from './modules/social'
 
+// 静态路由
 export const constantRoutes = [
   {
     path: '/login',
@@ -40,7 +41,13 @@ export const constantRoutes = [
         meta: { title: 'Dashboard', icon: 'dashboard' }
       }
     ]
-  },
+  }
+  // 404 page must be placed at the end !!!
+  // { path: '*', redirect: '/404', hidden: true }
+]
+
+// 动态路由
+export const asyncRoutes = [
   departmentRouter,
   roleRouter,
   employeeRouter,
@@ -48,14 +55,11 @@ export const constantRoutes = [
   attendanceRouter,
   approvalRouter,
   salaryRouter,
-  socialRouter,
-  // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  socialRouter
 ]
-
 const createRouter = () =>
   new Router({
-    // mode: 'history', // require service support
+    mode: 'history', // require service support
     scrollBehavior: () => ({ y: 0 }),
     routes: constantRoutes
   })

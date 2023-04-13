@@ -1,4 +1,5 @@
 import router from '@/router'
+import { asyncRoutes } from '@/router'
 import nprogress from 'nprogress'
 import 'nprogress/nprogress.css'
 import store from '@/store'
@@ -7,7 +8,6 @@ import store from '@/store'
  *前置守卫
  *
 */
-
 const whiteList = ['/login', '/404']
 router.beforeEach(async(to, from, next) => {
   nprogress.start()
@@ -20,7 +20,23 @@ router.beforeEach(async(to, from, next) => {
       nprogress.done()
     } else {
       if (!store.getters.userId) {
-        await store.dispatch('user/getUserInfo')
+        const { roles } = await store.dispatch('user/getUserInfo')
+        // console.log(roles.menus)
+        // 根据用户信息 筛选出用户的权限
+        const filterRoutes = []
+        for (let i = 0; i < asyncRoutes.length; i++) {
+          asyncRoutes[i].children.forEach(item => {
+            // console.log(item.name)
+            if (roles.menus.includes(item.name)) {
+              filterRoutes.push(asyncRoutes[i])
+            }
+          })
+        }
+        console.log('动态路由', filterRoutes)
+        router.addRoutes([...filterRoutes, { path: '*', redirect: '/404', hidden: true }]) // router添加动态路由
+        // 路由的增加不是响应式的 所以我们还是要将路由放在vuex存起来
+        store.commit('user/setRoutes', filterRoutes)
+        next(to.path)
       }
       next() // 放行
       nprogress.done()

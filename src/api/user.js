@@ -24,3 +24,8 @@ export function updatePassword(data) {
   })
 }
 
+export function getUserDetailById() {
+  return request({
+    url: '/sys/profile'
+  })
+}
